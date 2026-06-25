@@ -1,13 +1,22 @@
+import { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router';
 import { useAuthStore } from '../store/auth.ts';
 
 export function Layout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
+  const [copied, setCopied] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleCopyId = async () => {
+    if (!user) return;
+    await navigator.clipboard.writeText(user._id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
   };
 
   const homeUrl = user?.role === 'teacher' ? '/teacher' : '/student';
@@ -25,6 +34,15 @@ export function Layout() {
               {user?.role}
             </span>
           </span>
+          {user?.role === 'teacher' && (
+            <button
+              onClick={handleCopyId}
+              title="Скопировать ID для регистрации учеников"
+              className="text-xs font-mono text-gray-400 hover:text-indigo-600 transition-colors"
+            >
+              {copied ? '✓ скопировано' : `ID: ${user._id}`}
+            </button>
+          )}
           <button
             onClick={handleLogout}
             className="text-sm text-gray-500 hover:text-gray-800 transition-colors"

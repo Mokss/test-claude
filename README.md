@@ -59,7 +59,7 @@ RabbitMQ Management UI: [http://localhost:15672](http://localhost:15672) (guest 
 ## Production-сборка (всё через Docker)
 
 ```bash
-docker compose --profile build up --build
+docker compose --profile build up --build -d
 ```
 
 Nginx собирает статику frontend и отдаёт её на [http://localhost](http://localhost), проксируя `/api/*` на core-backend. Без `--profile build` frontend-builder не запускается.
