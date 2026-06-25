@@ -1,0 +1,14 @@
+{
+  "name": "ismart",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "core-backend",
+    "sandbox-service",
+    "notification-service",
+    "specs"
+  ],
+  "scripts": {
+    "dev": "docker compose up --build"
+  }
+}
