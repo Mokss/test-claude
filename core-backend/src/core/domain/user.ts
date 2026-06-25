@@ -1,5 +1,8 @@
-export type UserRole = 'teacher' | 'student';
+import type { UserRole, UserPublic } from '@ismart/specs';
 
+export type { UserRole, UserPublic };
+
+// User — backend-only: содержит passwordHash, которого нет в публичном типе
 export interface User {
   _id: string;
   email: string;
@@ -9,8 +12,6 @@ export interface User {
   teacherId?: string;
   createdAt: Date;
 }
-
-export type UserPublic = Pick<User, '_id' | 'email' | 'role' | 'name'>;
 
 export function toPublic(user: User): UserPublic {
   return { _id: user._id, email: user.email, role: user.role, name: user.name };

@@ -6,9 +6,7 @@ import type { IAuthUseCase, AuthResult } from './core/ports/input/auth-use-case.
 import type { ITaskUseCase } from './core/ports/input/task-use-case.ts';
 import type { ISubmissionUseCase } from './core/ports/input/submission-use-case.ts';
 import type { IStatsUseCase } from './core/ports/input/stats-use-case.ts';
-import type { Task } from './core/domain/task.ts';
-import type { Submission } from './core/domain/submission.ts';
-import type { StudentStats } from './core/domain/stats.ts';
+import type { Task, Submission, StudentStats } from '@ismart/specs';
 
 // --- Mock services ---
 
@@ -38,6 +36,7 @@ function makeMockAuth(): IAuthUseCase {
   return {
     async register() { return MOCK_AUTH_RESULT; },
     async login() { return MOCK_AUTH_RESULT; },
+    async getStudents() { return []; },
   };
 }
 
@@ -197,6 +196,44 @@ describe('HTTP routes', () => {
     });
   });
 
+  describe('GET /api/tasks/:id', () => {
+    it('возвращает задачу по id → 200', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/tasks/t1',
+        headers: authHeader(teacherToken(app)),
+      });
+
+      assert.equal(res.statusCode, 200);
+      assert.equal(res.json()._id, 't1');
+    });
+
+    it('маппит NOT_FOUND → 404', async () => {
+      const tasks = makeMockTasks();
+      tasks.getById = async () => { throw new Error('NOT_FOUND'); };
+      const app = await buildApp({ ...makeServices(), tasks }, JWT_SECRET);
+      await app.ready();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/tasks/unknown',
+        headers: authHeader(teacherToken(app)),
+      });
+
+      assert.equal(res.statusCode, 404);
+    });
+
+    it('возвращает 401 без токена', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({ method: 'GET', url: '/api/tasks/t1' });
+      assert.equal(res.statusCode, 401);
+    });
+  });
+
   describe('POST /api/tasks', () => {
     it('учитель создаёт задачу → 201', async () => {
       const app = await setup();
@@ -226,6 +263,34 @@ describe('HTTP routes', () => {
   });
 
   describe('PATCH /api/tasks/:id', () => {
+    it('учитель обновляет задачу → 200', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'PATCH', url: '/api/tasks/t1',
+        headers: authHeader(teacherToken(app)),
+        payload: { title: 'Новый заголовок' },
+      });
+
+      assert.equal(res.statusCode, 200);
+      assert.equal(res.json()._id, 't1');
+    });
+
+    it('студент не может обновить задачу → 403', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'PATCH', url: '/api/tasks/t1',
+        headers: authHeader(studentToken(app)),
+        payload: { title: 'Новый заголовок' },
+      });
+
+      assert.equal(res.statusCode, 403);
+    });
+
+
     it('маппит NOT_FOUND → 404', async () => {
       const tasks = makeMockTasks();
       tasks.update = async () => { throw new Error('NOT_FOUND'); };
@@ -253,6 +318,113 @@ describe('HTTP routes', () => {
         method: 'PATCH', url: '/api/tasks/t1',
         headers: authHeader(teacherToken(app)),
         payload: { title: 'New' },
+      });
+
+      assert.equal(res.statusCode, 403);
+    });
+  });
+
+  describe('GET /api/tasks/:taskId/submissions', () => {
+    it('учитель получает список решений → 200', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/tasks/t1/submissions',
+        headers: authHeader(teacherToken(app)),
+      });
+
+      assert.equal(res.statusCode, 200);
+      assert.equal(res.json().length, 1);
+    });
+
+    it('студент получает только свои решения → 200', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/tasks/t1/submissions',
+        headers: authHeader(studentToken(app)),
+      });
+
+      assert.equal(res.statusCode, 200);
+    });
+
+    it('возвращает 401 без токена', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({ method: 'GET', url: '/api/tasks/t1/submissions' });
+      assert.equal(res.statusCode, 401);
+    });
+  });
+
+  describe('GET /api/submissions/:id', () => {
+    it('возвращает решение по id → 200', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/submissions/s1',
+        headers: authHeader(teacherToken(app)),
+      });
+
+      assert.equal(res.statusCode, 200);
+      assert.equal(res.json()._id, 's1');
+    });
+
+    it('маппит NOT_FOUND → 404', async () => {
+      const submissions = makeMockSubmissions();
+      submissions.getById = async () => { throw new Error('NOT_FOUND'); };
+      const app = await buildApp({ ...makeServices(), submissions }, JWT_SECRET);
+      await app.ready();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/submissions/unknown',
+        headers: authHeader(teacherToken(app)),
+      });
+
+      assert.equal(res.statusCode, 404);
+    });
+
+    it('маппит FORBIDDEN → 403', async () => {
+      const submissions = makeMockSubmissions();
+      submissions.getById = async () => { throw new Error('FORBIDDEN'); };
+      const app = await buildApp({ ...makeServices(), submissions }, JWT_SECRET);
+      await app.ready();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/submissions/s1',
+        headers: authHeader(studentToken(app)),
+      });
+
+      assert.equal(res.statusCode, 403);
+    });
+  });
+
+  describe('GET /api/students/:studentId/submissions', () => {
+    it('учитель получает решения ученика → 200', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/students/u2/submissions',
+        headers: authHeader(teacherToken(app)),
+      });
+
+      assert.equal(res.statusCode, 200);
+      assert.equal(res.json().length, 1);
+    });
+
+    it('студент не может получить решения чужого ученика → 403', async () => {
+      const app = await setup();
+      after(() => app.close());
+
+      const res = await app.inject({
+        method: 'GET', url: '/api/students/u2/submissions',
+        headers: authHeader(studentToken(app)),
       });
 
       assert.equal(res.statusCode, 403);

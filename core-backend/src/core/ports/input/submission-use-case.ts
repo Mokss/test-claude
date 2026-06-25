@@ -1,5 +1,4 @@
-import type { Submission } from '../../domain/submission.ts';
-import type { Language } from '../../domain/task.ts';
+import type { Submission, Language, SandboxResult } from '@ismart/specs';
 
 export interface SubmitInput {
   taskId: string;
@@ -21,5 +20,5 @@ export interface ISubmissionUseCase {
   listByTask(taskId: string, requesterId: string, requesterRole: 'teacher' | 'student'): Promise<Submission[]>;
   listByStudent(studentId: string, teacherId: string): Promise<Submission[]>;
   grade(input: GradeInput): Promise<Submission>;
-  handleSandboxResult(submissionId: string, result: import('../../domain/submission.js').SandboxResult): Promise<void>;
+  handleSandboxResult(submissionId: string, result: SandboxResult): Promise<void>;
 }

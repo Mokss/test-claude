@@ -1,4 +1,4 @@
-import type { Task } from '../../domain/task.ts';
+import type { Task } from '@ismart/specs';
 
 export type TaskUpdateData = Partial<Pick<Task,
   'title' | 'description' | 'starterCode' | 'testCases' | 'timeLimitMs' | 'memoryLimitMb' | 'status'

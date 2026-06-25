@@ -1,4 +1,4 @@
-import type { Grade, SandboxStatus } from './submission';
+import type { Grade, SandboxStatus } from './submission.ts';
 
 export interface TaskStat {
   taskId: string;

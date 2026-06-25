@@ -1,4 +1,4 @@
-import type { Submission, SandboxResult, Grade } from '../../domain/submission.ts';
+import type { Submission, SandboxResult, Grade } from '@ismart/specs';
 
 export interface ISubmissionRepository {
   findById(id: string): Promise<Submission | null>;

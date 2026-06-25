@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { ISubmissionUseCase } from '../../../../core/ports/input/submission-use-case.ts';
-import type { SandboxResult } from '../../../../core/domain/submission.ts';
+import type { SandboxResult } from '@ismart/specs';
 
 // Called by sandbox-service after execution — no JWT, protected by Docker network only
 export function internalRoutes(submissions: ISubmissionUseCase) {

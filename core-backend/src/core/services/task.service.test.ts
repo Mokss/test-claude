@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { TaskService } from './task.service.ts';
 import type { ITaskRepository, TaskUpdateData } from '../ports/output/task-repository.ts';
 import type { IUserRepository } from '../ports/output/user-repository.ts';
-import type { Task } from '../domain/task.ts';
+import type { Task } from '@ismart/specs';
 import type { User } from '../domain/user.ts';
 
 function makeTaskRepo(initial: Task[] = []): ITaskRepository {

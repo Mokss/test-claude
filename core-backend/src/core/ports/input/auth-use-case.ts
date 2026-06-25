@@ -21,4 +21,5 @@ export interface AuthResult {
 export interface IAuthUseCase {
   register(input: RegisterInput): Promise<AuthResult>;
   login(input: LoginInput): Promise<AuthResult>;
+  getStudents(teacherId: string): Promise<UserPublic[]>;
 }

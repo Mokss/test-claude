@@ -1,8 +1,7 @@
 import type { IStatsUseCase } from '../ports/input/stats-use-case.ts';
 import type { ISubmissionRepository } from '../ports/output/submission-repository.ts';
 import type { ITaskRepository } from '../ports/output/task-repository.ts';
-import type { StudentStats, TaskStat } from '../domain/stats.ts';
-import type { Submission, SandboxStatus } from '../domain/submission.ts';
+import type { StudentStats, TaskStat, Submission, SandboxStatus } from '@ismart/specs';
 
 const TERMINAL: SubmissionStatus[] = ['passed', 'failed', 'timeout', 'error'];
 type SubmissionStatus = Submission['status'];

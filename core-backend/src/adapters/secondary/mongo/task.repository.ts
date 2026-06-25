@@ -1,6 +1,6 @@
 import { type Collection, type Db, ObjectId } from 'mongodb';
 import type { ITaskRepository, TaskUpdateData } from '../../../core/ports/output/task-repository.ts';
-import type { Task } from '../../../core/domain/task.ts';
+import type { Task } from '@ismart/specs';
 
 type TaskDoc = Omit<Task, '_id'> & { _id: ObjectId };
 

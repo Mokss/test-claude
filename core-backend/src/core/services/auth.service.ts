@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import type { IAuthUseCase, RegisterInput, LoginInput, AuthResult } from '../ports/input/auth-use-case.ts';
 import type { IUserRepository } from '../ports/output/user-repository.ts';
+import type { UserPublic } from '../domain/user.ts';
 import { toPublic } from '../domain/user.ts';
 
 type SignFn = (payload: object) => Promise<string>;
@@ -45,5 +46,10 @@ export class AuthService implements IAuthUseCase {
 
     const token = await this.sign({ sub: user._id, role: user.role, teacherId: user.teacherId });
     return { token, user: toPublic(user) };
+  }
+
+  async getStudents(teacherId: string): Promise<UserPublic[]> {
+    const students = await this.users.findStudentsByTeacher(teacherId);
+    return students.map(toPublic);
   }
 }

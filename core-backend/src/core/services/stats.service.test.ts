@@ -3,8 +3,7 @@ import assert from 'node:assert/strict';
 import { StatsService } from './stats.service.ts';
 import type { ISubmissionRepository } from '../ports/output/submission-repository.ts';
 import type { ITaskRepository } from '../ports/output/task-repository.ts';
-import type { Submission, SandboxResult } from '../domain/submission.ts';
-import type { Task } from '../domain/task.ts';
+import type { Submission, SandboxResult, Task } from '@ismart/specs';
 
 // --- In-memory repos ---
 

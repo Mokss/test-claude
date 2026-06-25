@@ -10,6 +10,7 @@ import { taskRoutes } from './adapters/primary/http/routes/task.routes.ts';
 import { submissionRoutes } from './adapters/primary/http/routes/submission.routes.ts';
 import { statsRoutes } from './adapters/primary/http/routes/stats.routes.ts';
 import { internalRoutes } from './adapters/primary/http/routes/internal.routes.ts';
+import { studentsRoutes } from './adapters/primary/http/routes/students.routes.ts';
 
 export interface AppServices {
   auth: IAuthUseCase;
@@ -30,6 +31,7 @@ export async function buildApp(services: AppServices, jwtSecret: string) {
   app.register(submissionRoutes(services.submissions), { prefix: '/api' });
   app.register(statsRoutes(services.stats), { prefix: '/api' });
   app.register(internalRoutes(services.submissions), { prefix: '/api' });
+  app.register(studentsRoutes(services.auth), { prefix: '/api' });
 
   return app;
 }

@@ -1,5 +1,5 @@
-import type { Language } from './task';
-import type { SandboxResult } from './submission';
+import type { Language } from './task.ts';
+import type { SandboxResult } from './submission.ts';
 
 // Контракты событий через шину (core → sandbox, sandbox → core, core → notification)
 

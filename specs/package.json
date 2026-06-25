@@ -1,6 +1,7 @@
 {
   "name": "@ismart/specs",
   "version": "1.0.0",
+  "type": "module",
   "main": "types/index.ts",
   "types": "types/index.ts"
 }

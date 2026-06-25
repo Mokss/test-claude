@@ -1,4 +1,4 @@
-import type { Task, Language, TestCase } from '../../domain/task.ts';
+import type { Task, Language, TestCase } from '@ismart/specs';
 
 export interface CreateTaskInput {
   title: string;

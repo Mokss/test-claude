@@ -1,7 +1,7 @@
 import type { ITaskUseCase, CreateTaskInput, UpdateTaskInput } from '../ports/input/task-use-case.ts';
 import type { ITaskRepository } from '../ports/output/task-repository.ts';
 import type { IUserRepository } from '../ports/output/user-repository.ts';
-import type { Task } from '../domain/task.ts';
+import type { Task } from '@ismart/specs';
 
 export class TaskService implements ITaskUseCase {
   private readonly tasks: ITaskRepository;

@@ -5,8 +5,7 @@ import type { ISubmissionRepository } from '../ports/output/submission-repositor
 import type { ITaskRepository } from '../ports/output/task-repository.ts';
 import type { IUserRepository } from '../ports/output/user-repository.ts';
 import type { IEventBus, SandboxRunEvent, NotifyTeacherEvent } from '../ports/output/event-bus.ts';
-import type { Submission, SandboxResult, Grade } from '../domain/submission.ts';
-import type { Task } from '../domain/task.ts';
+import type { Submission, SandboxResult, Grade, Task } from '@ismart/specs';
 import type { User } from '../domain/user.ts';
 
 // --- In-memory repos ---
@@ -168,6 +167,7 @@ describe('SubmissionService', () => {
 
       assert.equal(bus.notifyEvents.length, 1);
       assert.equal(bus.notifyEvents[0].teacherId, 't1');
+      assert.equal(bus.notifyEvents[0].teacherEmail, TEACHER.email);
       assert.equal(bus.notifyEvents[0].studentName, STUDENT.name);
       assert.equal(bus.notifyEvents[0].status, 'passed');
     });

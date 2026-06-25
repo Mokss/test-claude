@@ -1,6 +1,6 @@
 import { type Collection, type Db, ObjectId } from 'mongodb';
 import type { ISubmissionRepository } from '../../../core/ports/output/submission-repository.ts';
-import type { Submission, SandboxResult, Grade } from '../../../core/domain/submission.ts';
+import type { Submission, SandboxResult, Grade } from '@ismart/specs';
 
 type SubmissionDoc = Omit<Submission, '_id'> & { _id: ObjectId };
 

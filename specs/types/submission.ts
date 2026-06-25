@@ -1,5 +1,5 @@
-import type { Language } from './task';
-import type { UserPublic } from './user';
+import type { Language } from './task.ts';
+import type { UserPublic } from './user.ts';
 
 export type SubmissionStatus = 'pending' | 'running' | 'passed' | 'failed' | 'timeout' | 'error';
 export type SandboxStatus = 'passed' | 'failed' | 'timeout' | 'error';

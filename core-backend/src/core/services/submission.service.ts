@@ -3,7 +3,7 @@ import type { ISubmissionRepository } from '../ports/output/submission-repositor
 import type { ITaskRepository } from '../ports/output/task-repository.ts';
 import type { IUserRepository } from '../ports/output/user-repository.ts';
 import type { IEventBus } from '../ports/output/event-bus.ts';
-import type { Submission, SandboxResult } from '../domain/submission.ts';
+import type { Submission, SandboxResult } from '@ismart/specs';
 
 export class SubmissionService implements ISubmissionUseCase {
   private readonly submissions: ISubmissionRepository;
@@ -58,13 +58,17 @@ export class SubmissionService implements ISubmissionUseCase {
     const student = await this.users.findById(sub.studentId);
 
     if (task && student && student.teacherId) {
-      await this.bus.publishNotifyTeacher({
-        teacherId: student.teacherId,
-        studentName: student.name,
-        taskTitle: task.title,
-        submissionId: sub._id,
-        status: result.status === 'passed' ? 'passed' : 'failed',
-      });
+      const teacher = await this.users.findById(student.teacherId);
+      if (teacher) {
+        await this.bus.publishNotifyTeacher({
+          teacherId: teacher._id,
+          teacherEmail: teacher.email,
+          studentName: student.name,
+          taskTitle: task.title,
+          submissionId: sub._id,
+          status: result.status === 'passed' ? 'passed' : 'failed',
+        });
+      }
     }
   }
 

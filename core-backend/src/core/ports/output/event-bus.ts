@@ -1,5 +1,4 @@
-import type { Language } from '../../domain/task.ts';
-import type { SandboxResult } from '../../domain/submission.ts';
+import type { Language, SandboxResult } from '@ismart/specs';
 
 export interface SandboxRunEvent {
   submissionId: string;
@@ -17,6 +16,7 @@ export interface SandboxResultEvent {
 
 export interface NotifyTeacherEvent {
   teacherId: string;
+  teacherEmail: string;
   studentName: string;
   taskTitle: string;
   submissionId: string;

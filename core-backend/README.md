@@ -24,7 +24,7 @@ docker compose up mongo rabbitmq
 node --experimental-strip-types --test 'src/**/*.test.ts'
 ```
 
-62 теста: 42 на бизнес-логику (services), 20 на HTTP роуты (app.inject).
+75 тестов: 42 на бизнес-логику (services), 33 на HTTP роуты (app.inject).
 
 ## Проверка типов
 
