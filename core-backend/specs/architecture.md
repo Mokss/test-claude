@@ -192,15 +192,76 @@ node --experimental-strip-types --test 'src/core/services/*.test.ts'
 - `submissions`: `taskId`, `studentId`, `{ taskId, studentId }`, `submittedAt desc`
 
 **Запуск в проде:** `node --experimental-strip-types src/server.ts` (без компиляции, Node 24).
-**Проверка типов:** `npm run build` → `tsc --noEmit`.
+**Проверка типов:** `npm run typeCheck` → `tsc --noEmit`.
+
+---
+
+## Secondary Adapters — RabbitMQ (`adapters/secondary/amqp/`)
+
+| Файл | Назначение |
+|------|-----------|
+| `setup.ts` | `createChannel(url)` — подключение, объявление exchanges/queues/bindings |
+| `event-bus.ts` | `AmqpEventBus implements IEventBus` — публикует `SandboxRunEvent`, `NotifyTeacherEvent` |
+| `consumer.ts` | `startSandboxResultConsumer(channel, submissions)` — слушает `sandbox.result` |
+
+**Константы в `setup.ts`:** `EXCHANGE_SANDBOX='sandbox'`, `EXCHANGE_NOTIFY='notify'`,
+`ROUTING_SANDBOX_RUN`, `ROUTING_SANDBOX_RESULT`, `ROUTING_NOTIFY_TEACHER`
+
+**Надёжность:**
+- Публикация: `persistent: true` (delivery mode 2)
+- Consumer: ручной `ack` после успеха, `nack(requeue=false)` при ошибке или невалидном JSON
+
+Подробнее про форматы сообщений → [events.md](events.md)
+
+---
+
+## Primary Adapter — HTTP (`adapters/primary/http/`)
+
+| Файл | Назначение |
+|------|-----------|
+| `errors.ts` | `registerErrorHandler` — маппинг строк ошибок сервисов в HTTP статусы |
+| `auth-hook.ts` | `requireAuth`, `requireTeacher`, `requireStudent` — preHandler хуки; аугментация `FastifyJWT` |
+| `routes/auth.routes.ts` | POST `/api/auth/register`, POST `/api/auth/login` |
+| `routes/task.routes.ts` | CRUD `/api/tasks`, GET `/api/tasks/:id` |
+| `routes/submission.routes.ts` | POST/GET `/api/tasks/:taskId/submissions`, GET/PATCH `/api/submissions/:id`, GET `/api/students/:studentId/submissions` |
+| `routes/stats.routes.ts` | GET `/api/students/:studentId/stats` |
+| `routes/internal.routes.ts` | POST `/api/internal/sandbox-result` (без JWT, только Docker-сеть) |
+
+**JWT payload:** `{ sub: userId, role, teacherId? }` — `teacherId` нужен чтобы student мог получить задачи своего учителя без лишнего запроса в БД.
+
+**Маппинг ошибок:**
+```
+EMAIL_TAKEN / TEACHER_ID_REQUIRED / INVALID_SCORE → 400
+INVALID_CREDENTIALS → 401
+FORBIDDEN → 403
+NOT_FOUND → 404
+NOT_READY → 409
+```
+
+Подробнее про эндпоинты → [api.md](api.md)
+
+---
+
+## Composition Root
+
+### `app.ts` — `buildApp(services, jwtSecret)`
+Принимает готовые экземпляры use-case-ов, регистрирует JWT-плагин, error handler, все роуты. Возвращает Fastify-инстанс.
+
+### `server.ts` — точка входа
+1. Подключение к MongoDB + `ensureIndexes`
+2. Подключение к RabbitMQ + `createChannel`
+3. Создание репозиториев и `AmqpEventBus`
+4. Lazy `SignFn` через Promise (разрешается после `app.ready()`)
+5. Создание сервисов → `buildApp` → `app.ready()` → резолв sign → `startSandboxResultConsumer` → `listen`
 
 ---
 
 ## Что ещё не написано
 
-- `adapters/primary/http/` — Fastify роуты (auth, tasks, submissions, stats)
-- `adapters/secondary/amqp/` — RabbitMQ реализация `IEventBus` + consumer для `SandboxResultEvent`
-- `app.ts` / `server.ts` — DI composition root
+~~Всё написано для core-backend.~~ Переходим к смежным сервисам:
+- `sandbox-service/` — выполнение кода в изоляции
+- `notification-service/` — отправка email учителю
+- `frontend/` — React SPA
 
 ---
 

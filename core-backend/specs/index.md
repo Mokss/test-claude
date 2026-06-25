@@ -24,6 +24,6 @@ npm run typeCheck
 | Domain + Ports | ✅ готово |
 | Services (core) | ✅ 42/42 тестов |
 | MongoDB адаптеры | ✅ готово |
-| RabbitMQ адаптер | ⏳ не написан |
-| Fastify HTTP роуты | ⏳ не написан |
-| app.ts / server.ts | ⏳ не написан |
+| RabbitMQ адаптер | ✅ готово |
+| Fastify HTTP роуты | ✅ готово |
+| app.ts / server.ts | ✅ готово |

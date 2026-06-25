@@ -32,7 +32,7 @@ export class AuthService implements IAuthUseCase {
       teacherId: input.teacherId,
     });
 
-    const token = await this.sign({ sub: user._id, role: user.role });
+    const token = await this.sign({ sub: user._id, role: user.role, teacherId: user.teacherId });
     return { token, user: toPublic(user) };
   }
 
@@ -43,7 +43,7 @@ export class AuthService implements IAuthUseCase {
     const valid = await bcrypt.compare(input.password, user.passwordHash);
     if (!valid) throw new Error('INVALID_CREDENTIALS');
 
-    const token = await this.sign({ sub: user._id, role: user.role });
+    const token = await this.sign({ sub: user._id, role: user.role, teacherId: user.teacherId });
     return { token, user: toPublic(user) };
   }
 }
