@@ -1,11 +1,14 @@
 import { createChannel } from './amqp/setup.ts';
 import { startConsumer } from './amqp/consumer.ts';
 import { AmqpPublisher } from './amqp/publisher.ts';
-import { runCode } from './runner.ts';
+import { runCode, ensureImages } from './runner.ts';
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL ?? 'amqp://localhost:5672';
 
 async function main() {
+  console.log('[sandbox-service] ensuring runtime images...');
+  await ensureImages();
+
   console.log('[sandbox-service] connecting to RabbitMQ...');
   const channel = await createChannel(RABBITMQ_URL);
   console.log('[sandbox-service] connected');

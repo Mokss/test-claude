@@ -78,10 +78,16 @@ describe('TaskService', () => {
       assert.equal(task.memoryLimitMb, 128);
     });
 
-    it('новая задача всегда в статусе draft', async () => {
+    it('без указания статуса задача создаётся как draft', async () => {
       const service = new TaskService(makeTaskRepo(), makeUserRepo([TEACHER]));
       const task = await service.create({ title: 'T', description: 'D', language: 'javascript', authorId: 't1' });
       assert.equal(task.status, 'draft');
+    });
+
+    it('создаёт сразу опубликованную задачу, если передан status', async () => {
+      const service = new TaskService(makeTaskRepo(), makeUserRepo([TEACHER]));
+      const task = await service.create({ title: 'T', description: 'D', language: 'javascript', status: 'published', authorId: 't1' });
+      assert.equal(task.status, 'published');
     });
   });
 

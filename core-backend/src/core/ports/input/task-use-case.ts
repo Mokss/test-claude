@@ -1,4 +1,4 @@
-import type { Task, Language, TestCase } from '@ismart/specs';
+import type { Task, Language, TestCase, TaskStatus } from '@ismart/specs';
 
 export interface CreateTaskInput {
   title: string;
@@ -8,6 +8,7 @@ export interface CreateTaskInput {
   testCases?: TestCase[];
   timeLimitMs?: number;
   memoryLimitMb?: number;
+  status?: TaskStatus;
   authorId: string;
 }
 

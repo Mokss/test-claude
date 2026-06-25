@@ -26,6 +26,7 @@ export function runCode(event: SandboxRunEvent): Promise<SandboxResult> {
 
     const args = [
       'run', '--rm', '-i',
+      '--pull', 'never', // образы пре-пуллятся при старте; pull здесь засчитался бы в timeLimit
       '--network', 'none',
       `-m`, `${memoryLimitMb}m`,
       '--cpus', '0.5',
@@ -76,6 +77,29 @@ export function runCode(event: SandboxRunEvent): Promise<SandboxResult> {
       clearTimeout(timer);
       resolve(errorResult(event, err.message));
     });
+  });
+}
+
+// Скачивает все рантайм-образы один раз при старте, чтобы pull не съедал timeLimit задачи.
+export async function ensureImages(): Promise<void> {
+  for (const image of Object.values(DOCKER_IMAGES)) {
+    await pullImage(image);
+  }
+}
+
+function pullImage(image: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    console.log(`[sandbox-service] pulling ${image}...`);
+    const child = spawn('docker', ['pull', image], { stdio: ['ignore', 'inherit', 'inherit'] });
+    child.on('close', (code) => {
+      if (code === 0) {
+        console.log(`[sandbox-service] image ready: ${image}`);
+        resolve();
+      } else {
+        reject(new Error(`docker pull ${image} failed (exit ${code})`));
+      }
+    });
+    child.on('error', reject);
   });
 }
 

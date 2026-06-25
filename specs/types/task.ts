@@ -27,7 +27,7 @@ export interface Task {
 export type TaskCreateRequest = Pick<
   Task,
   'title' | 'description' | 'language' | 'starterCode' | 'testCases' | 'timeLimitMs' | 'memoryLimitMb'
->;
+> & { status?: TaskStatus };
 
 export type TaskUpdateRequest = Partial<
   Pick<Task, 'title' | 'description' | 'starterCode' | 'testCases' | 'timeLimitMs' | 'memoryLimitMb' | 'status'>

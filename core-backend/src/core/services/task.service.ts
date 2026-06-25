@@ -22,7 +22,7 @@ export class TaskService implements ITaskUseCase {
       testCases: input.testCases ?? [],
       timeLimitMs: input.timeLimitMs ?? 5000,
       memoryLimitMb: input.memoryLimitMb ?? 128,
-      status: 'draft',
+      status: input.status ?? 'draft',
     });
   }
 
