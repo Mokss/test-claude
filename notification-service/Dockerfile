@@ -1,0 +1,9 @@
+FROM node:24-alpine
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY src ./src
+COPY tsconfig.json .
+
+CMD ["node", "--experimental-strip-types", "src/server.ts"]
