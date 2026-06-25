@@ -11,7 +11,7 @@
 ```bash
 # запустить тесты (без Docker)
 cd core-backend
-node --experimental-strip-types --test 'src/core/services/*.test.ts'
+node --experimental-strip-types --test 'src/**/*.test.ts'
 
 # проверить типы
 npm run typeCheck
@@ -23,6 +23,7 @@ npm run typeCheck
 |------|--------|
 | Domain + Ports | ✅ готово |
 | Services (core) | ✅ 42/42 тестов |
+| HTTP routes (app.inject) | ✅ 20/20 тестов |
 | MongoDB адаптеры | ✅ готово |
 | RabbitMQ адаптер | ✅ готово |
 | Fastify HTTP роуты | ✅ готово |

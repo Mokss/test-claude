@@ -254,17 +254,6 @@ NOT_READY → 409
 4. Lazy `SignFn` через Promise (разрешается после `app.ready()`)
 5. Создание сервисов → `buildApp` → `app.ready()` → резолв sign → `startSandboxResultConsumer` → `listen`
 
----
-
-## Что ещё не написано
-
-~~Всё написано для core-backend.~~ Переходим к смежным сервисам:
-- `sandbox-service/` — выполнение кода в изоляции
-- `notification-service/` — отправка email учителю
-- `frontend/` — React SPA
-
----
-
 ## Переменные окружения
 
 ```
