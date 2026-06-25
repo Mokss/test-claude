@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch --experimental-strip-types src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
+    "typeCheck": "tsc --noEmit",
+    "start": "node --experimental-strip-types src/server.ts",
     "test": "node --experimental-strip-types --test 'src/**/*.test.ts'"
   },
   "dependencies": {
